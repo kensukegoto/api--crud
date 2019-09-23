@@ -1,8 +1,9 @@
+const {DOMAIN,PORT} = require("./confg");
+
 const router = require("express").Router();
 const fs = require("fs");
-const multer = require("multer");
-const upload = multer();
-const JSON_PATH = "./data.json"; 
+const upload = require("./upload")
+const JSON_PATH = "./data.json";
 
 const tmpl = {
   "id": "",
@@ -39,7 +40,7 @@ router.post("/add",upload.single("tmb"),(req,res)=>{
   const id = +jsonObj.items[jsonObj.items.length -1 ].id + 1;
   // h4のみ必須
 
-  const item = Object.keys(body).reduce((sum,key)=>{
+  let item = Object.keys(body).reduce((sum,key)=>{
 
     switch(key){
       case "h4":
@@ -57,11 +58,9 @@ router.post("/add",upload.single("tmb"),(req,res)=>{
 
   },{...tmpl,id})
 
-
-   /** file
-    * tml
-    */
-
+  if(file){
+    item["tmb"] = `${DOMAIN}:${PORT}/${file.path}`
+  }
   
   jsonObj.items.push(item);
   
@@ -83,7 +82,7 @@ router.put("/update/:id(\\d+)",upload.single("tmb"),(req,res)=>{
   
   const item__old = items__old.find( item => +item.id === +id);
 
-  const item__new = Object.keys(body).reduce((sum,key)=>{
+  let item__new = Object.keys(body).reduce((sum,key)=>{
 
     switch(key){
       case "h4":
@@ -101,12 +100,17 @@ router.put("/update/:id(\\d+)",upload.single("tmb"),(req,res)=>{
 
   },{...item__old,ul:[]})
 
+  if(file){
+    item__new["tmb"] = `${DOMAIN}:${PORT}/${file.path}`
+  }
+
   const items_new = items__old.map( item => {
     if(+item.id === +id){
       return item__new;
     }
     return item;
   })
+
 
   const jsonObj__new = {...jsonObj,items:items_new}
 
