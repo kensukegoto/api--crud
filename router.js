@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const fs = require("fs");
+const multer = require("multer");
+const upload = multer();
 
 router.get("/get",(req,res)=>{
 
@@ -18,5 +20,13 @@ router.get("/get/:id(\\d+)",(req,res)=>{
   res.json((!item)?{}:item);
 
 });
+
+router.post("/add",upload.single("tmb"),(req,res)=>{
+  const {body,file} = {...req};
+  console.log(body)
+  res.json({
+    success: true
+  })
+})
 
 module.exports = router;
