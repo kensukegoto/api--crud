@@ -5,8 +5,13 @@ const app = express();
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 
+const cors = require("cors");
+
 
 app.disable("x-powered-by");
+
+app.use(cors());
+
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 
